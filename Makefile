@@ -39,9 +39,11 @@ OBJS_BONUS		= ${SRCS_BONUS:.c=.o}
 
 HEADER			= header
 
+OBJDIR			= obj
+
 CC				= gcc
 
-CFLAGS 			= -Wall -Wextra -Werror 
+CFLAGS 			= -Wall -Wextra -Werror
 
 RM				= rm -rf
 
@@ -62,23 +64,26 @@ $(NAME):	${OBJS}
 			${LINK} ${MYLIB} ${OBJS}
 			ranlib ${MYLIB}
 			make -C ${PATH_MLX_LINUX}
-			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o ${NAME} 
+			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o ${NAME}	
+			mkdir -p ${OBJDIR} && mv ${OBJS} ${OBJDIR}
 
-rebonus:		${OBJS_BONUS}
+rebonus:	${OBJS_BONUS}
 			${LINK} ${MYLIB} ${OBJS_BONUS}
 			ranlib ${MYLIB}
 			make -C ${PATH_MLX_LINUX}
 			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o $(NAME)
-clean:
-			${RM} ${OBJS} ${OBJS_BONUS} ${OUT}
+			mkdir -p ${OBJDIR} && mv ${OBJS} ${OBJDIR}
 
-fclean:			clean
+clean:
+			${RM} ${OBJS} ${OBJS_BONUS} ${OUT} ${OBJDIR}
+
+fclean:		clean
 			${RM} ${NAME} ${MYLIB} 
 
 re:			fclean all
 
 bonus:		fclean rebonus
 
-.PHONY: 	all clean fclean re
+.PHONY: 	all clean fclean re rebonus bonus
 
 # -g3 -fsanitize=address
