@@ -67,23 +67,32 @@ $(NAME):	${OBJS}
 			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o ${NAME}	
 			mkdir -p ${OBJDIR} && mv ${OBJS} ${OBJDIR}
 
-rebonus:	${OBJS_BONUS}
-			${LINK} ${MYLIB} ${OBJS_BONUS}
-			ranlib ${MYLIB}
-			make -C ${PATH_MLX_LINUX}
-			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o $(NAME)
-			mkdir -p ${OBJDIR} && mv ${OBJS} ${OBJDIR}
-
 clean:
 			${RM} ${OBJS} ${OBJS_BONUS} ${OUT} ${OBJDIR}
 
 fclean:		clean
-			${RM} ${NAME} ${MYLIB} 
+			${RM} ${NAME} ${MYLIB}
+
+bonus:		${OBJS_BONUS}
+			${LINK} ${MYLIB} ${OBJS_BONUS}
+			ranlib ${MYLIB}
+			make -C ${PATH_MLX_LINUX}
+			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o $(NAME)
+			mkdir -p ${OBJDIR} && mv ${OBJS_BONUS} ${OBJDIR}
+
+valgrind:	${NAME}
+			valgrind \
+			--leak-check=full --tool=memcheck \
+			--show-reachable=yes \
+			--track-fds=yes \
+			--errors-for-leak-kinds=all \
+			--show-leak-kinds=all \
+			./${NAME} maps/map1.ber
 
 re:			fclean all
 
-bonus:		fclean rebonus
+rebonus:	fclean bonus
 
-.PHONY: 	all clean fclean re rebonus bonus
+.PHONY: 	all clean fclean re rebonus bonus valgrind
 
 # -g3 -fsanitize=address
