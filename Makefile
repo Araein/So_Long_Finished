@@ -81,7 +81,7 @@ bonus:		${OBJS_BONUS}
 			mkdir -p ${OBJDIR} && mv ${OBJS_BONUS} ${OBJDIR}
 
 valgrind:	${NAME}
-			valgrind \
+			@valgrind \
 			--leak-check=full --tool=memcheck \
 			--show-reachable=yes \
 			--track-fds=yes \
@@ -89,10 +89,13 @@ valgrind:	${NAME}
 			--show-leak-kinds=all \
 			./${NAME} maps/map1.ber
 
+norminette:	${SRCS} ${SRCS_BONUS}
+			@norminette header/So_long.h srcs/* bonus_files/*
+
 re:			fclean all
 
 rebonus:	fclean bonus
 
-.PHONY: 	all clean fclean re rebonus bonus valgrind
+.PHONY: 	all clean fclean re rebonus bonus valgrind norminette
 
 # -g3 -fsanitize=address
