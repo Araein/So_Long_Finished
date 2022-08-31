@@ -65,7 +65,6 @@ $(NAME):	${OBJS}
 			ranlib ${MYLIB}
 			make -C ${PATH_MLX_LINUX}
 			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o ${NAME}	
-			mkdir -p ${OBJDIR} && mv ${OBJS} ${OBJDIR}
 
 clean:
 			${RM} ${OBJS} ${OBJS_BONUS} ${OUT} ${OBJDIR}
@@ -73,12 +72,14 @@ clean:
 fclean:		clean
 			${RM} ${NAME} ${MYLIB}
 
+move:			${OBJS}
+				mkdir -p ${OBJDIR} && mv ${OBJS} ${OBJDIR}
+
 bonus:		${OBJS_BONUS}
 			${LINK} ${MYLIB} ${OBJS_BONUS}
 			ranlib ${MYLIB}
 			make -C ${PATH_MLX_LINUX}
 			${CC} ${FLAGS} -o3 ${MYLIB} ${MLX_LINUX} -lm -lbsd -lX11 -lXext -o $(NAME)
-			mkdir -p ${OBJDIR} && mv ${OBJS_BONUS} ${OBJDIR}
 
 valgrind:	${NAME}
 			@valgrind \
@@ -96,6 +97,6 @@ re:			fclean all
 
 rebonus:	fclean bonus
 
-.PHONY: 	all clean fclean re rebonus bonus valgrind norminette
+.PHONY: 	all clean fclean re rebonus bonus valgrind norminette move
 
 # -g3 -fsanitize=address
